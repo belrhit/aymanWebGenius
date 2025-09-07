@@ -1,0 +1,333 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, Star, ArrowLeft, Zap, Settings, Shield, Database, BarChart, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
+
+const SoftwareSolutionsPricing = () => {
+  const [selectedPackage, setSelectedPackage] = useState<number | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    note: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const packages = [
+    {
+      id: 1,
+      name: 'Essentiel',
+      price: '4999',
+      currency: 'DHS',
+      description: 'Solution logicielle pour PME',
+      features: [
+        'Logiciel de gestion basique',
+        'Interface utilisateur intuitive',
+        'Gestion des clients/produits',
+        'Facturation automatisée',
+        'Rapports de base',
+        'Base de données locale',
+        'Support technique 3 mois',
+        'Formation de base incluse'
+      ],
+      gradient: 'from-blue-500 to-purple-600',
+      popular: false,
+      icon: Settings
+    },
+    {
+      id: 2,
+      name: 'Professionnel',
+      price: '8999',
+      currency: 'DHS',
+      description: 'Solution complète pour entreprises',
+      features: [
+        'Logiciel de gestion avancé',
+        'Interface personnalisable',
+        'Gestion multi-utilisateurs',
+        'Système de permissions',
+        'Facturation et comptabilité',
+        'Gestion des stocks',
+        'Rapports analytiques avancés',
+        'Sauvegarde automatique cloud',
+        'Intégrations API',
+        'Support technique 6 mois',
+        'Formation équipe complète',
+        'Mises à jour gratuites (1 an)'
+      ],
+      gradient: 'from-emerald-500 to-teal-600',
+      popular: true,
+      icon: Star
+    },
+    {
+      id: 3,
+      name: 'Entreprise',
+      price: 'Sur devis',
+      currency: '',
+      description: 'Solution sur-mesure pour grandes entreprises',
+      features: [
+        'Logiciel entièrement personnalisé',
+        'Architecture évolutive',
+        'Gestion multi-sites',
+        'Tableau de bord exécutif',
+        'BI et analytics avancées',
+        'Intégration ERP/CRM',
+        'Workflow automatisé',
+        'API REST complète',
+        'Sécurité entreprise',
+        'Audit et conformité',
+        'Formation sur site',
+        'Support 24/7',
+        'Maintenance préventive',
+        'Hébergement dédié',
+        'SLA garanti'
+      ],
+      gradient: 'from-orange-500 to-red-600',
+      popular: false,
+      icon: Zap
+    }
+  ];
+
+  const handlePackageSelect = (packageId: number) => {
+    setSelectedPackage(packageId);
+    setIsDialogOpen(true);
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const selectedPkg = packages.find(pkg => pkg.id === selectedPackage);
+    
+    const message = `💼 Nouvelle Demande de Devis - Solutions Logicielles 🖥️
+
+📦 Package choisi: ${selectedPkg?.name} (${selectedPkg?.price} ${selectedPkg?.currency})
+
+👤 Informations client:
+• Nom: ${formData.firstName} ${formData.lastName}
+• Email: ${formData.email}
+• Téléphone: ${formData.phone}
+
+📝 Note du client:
+${formData.note || 'Aucune note spéciale'}
+
+---
+Message envoyé depuis aymanwebgenius.space`;
+
+    const whatsappUrl = `https://wa.me/212621036713?text=${encodeURIComponent(message)}`;
+    
+    try {
+      window.open(whatsappUrl, '_blank');
+      
+      toast({
+        title: "Demande envoyée avec succès!",
+        description: "Votre demande a été transmise via WhatsApp. Nous vous répondrons dans les plus brefs délais.",
+      });
+      
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        note: ''
+      });
+      setIsDialogOpen(false);
+      setSelectedPackage(null);
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur s'est produite. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Header */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-orange-600 to-red-700">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative container mx-auto px-6 py-16">
+          <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-8 transition-colors">
+            <ArrowLeft size={20} />
+            Retour à l'accueil
+          </Link>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center text-white"
+          >
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              Solutions Logicielles
+            </h1>
+            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto">
+              Automatisez et optimisez vos processus métier avec des logiciels sur-mesure
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Pricing Cards */}
+      <div className="container mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {packages.map((pkg, index) => (
+            <motion.div
+              key={pkg.id}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: index * 0.2 }}
+              className={`relative rounded-3xl p-8 shadow-2xl transform transition-all duration-300 hover:scale-105 ${
+                pkg.popular 
+                  ? 'bg-white border-4 border-emerald-500 ring-4 ring-emerald-100' 
+                  : 'bg-white border border-slate-200'
+              }`}
+            >
+              {pkg.popular && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-emerald-500 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
+                    Le plus populaire
+                  </span>
+                </div>
+              )}
+
+              <div className="text-center mb-8">
+                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r ${pkg.gradient} mb-4`}>
+                  <pkg.icon size={32} className="text-white" />
+                </div>
+                
+                <h3 className="text-2xl font-bold text-slate-800 mb-2">{pkg.name}</h3>
+                <p className="text-slate-600 mb-4">{pkg.description}</p>
+                
+                <div className="flex items-center justify-center gap-1 mb-6">
+                  <span className="text-4xl font-bold text-slate-800">{pkg.price}</span>
+                  {pkg.currency && <span className="text-slate-600 font-semibold">{pkg.currency}</span>}
+                </div>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {pkg.features.map((feature, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <Check size={20} className="text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <span className="text-slate-700">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Button
+                onClick={() => handlePackageSelect(pkg.id)}
+                className={`w-full py-6 text-lg font-semibold rounded-xl bg-gradient-to-r ${pkg.gradient} hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}
+              >
+                Choisir ce package
+              </Button>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Contact Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-center text-2xl font-bold text-slate-800">
+              Demande de Devis
+            </DialogTitle>
+            {selectedPackage && (
+              <p className="text-center text-slate-600">
+                Package sélectionné: <span className="font-semibold text-emerald-600">
+                  {packages.find(pkg => pkg.id === selectedPackage)?.name}
+                </span>
+              </p>
+            )}
+          </DialogHeader>
+          
+          <form onSubmit={handleFormSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Prénom *</label>
+                <Input
+                  value={formData.firstName}
+                  onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+                  required
+                  placeholder="Votre prénom"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Nom *</label>
+                <Input
+                  value={formData.lastName}
+                  onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+                  required
+                  placeholder="Votre nom"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Email *</label>
+              <Input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                required
+                placeholder="votre@email.com"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Téléphone *</label>
+              <Input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                required
+                placeholder="06 XX XX XX XX"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Note (optionnel)</label>
+              <Textarea
+                value={formData.note}
+                onChange={(e) => setFormData(prev => ({ ...prev, note: e.target.value }))}
+                placeholder="Décrivez brièvement votre projet ou vos besoins spécifiques..."
+                rows={3}
+              />
+            </div>
+            
+            <div className="flex gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsDialogOpen(false)}
+                className="flex-1"
+              >
+                Annuler
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600"
+              >
+                {isSubmitting ? 'Envoi...' : 'Envoyer la demande'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default SoftwareSolutionsPricing;
